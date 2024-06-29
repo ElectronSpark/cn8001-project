@@ -1,16 +1,16 @@
 ﻿**Learning and Practicing Docker**
 
-1. **Learning Docker**
-   1. **What is Docker?**
+**Learning Docker**
+   **What is Docker?**
 
       Docker is a virtualization software. It is a container runtime technology that allows you to build, test, and deploy applications faster than traditional methods.
 
-   1. **What’s the benefit of using Docker?**
+   **What’s the benefit of using Docker?**
 
       For our project, Docker simplifies DevOps processes by integrating seamlessly with CI/CD pipelines, enhancing deployment efficiency and reliability. It is lightweight and efficient, using fewer resources compared to virtual machines. 
 
-1. **Step-by-Step Process**
-1) **Setting up Docker and environment**
+**Step-by-Step Process**
+**Setting up Docker and environment**
 
    We can install the Docker Desktop from the Docker official website.
 
@@ -22,7 +22,7 @@
 
    ![](images/Aspose.Words.c1a068db-197f-49e4-8b03-4f02c5c1b9d2.003.png)
 
-1) **Create a new workspace named “main.py” in the VS Code new project.**
+**Create a new workspace named “main.py” in the VS Code new project.**
 
    ![](images/Aspose.Words.c1a068db-197f-49e4-8b03-4f02c5c1b9d2.004.png)
 
@@ -36,7 +36,7 @@
 
    ![](images/Aspose.Words.c1a068db-197f-49e4-8b03-4f02c5c1b9d2.006.png)
 
-1) **After creating the python app, we need the basic Docker components for it to function properly.**
+**After creating the python app, we need the basic Docker components for it to function properly.**
 
 First we create a “Dockerfile” in the new directory.
 
@@ -55,7 +55,7 @@ After that, we enter the command that will execute once the container has starte
 ![](images/Aspose.Words.c1a068db-197f-49e4-8b03-4f02c5c1b9d2.010.png)
 
 
-1) **Build the image within VS Code.**
+**Build the image within VS Code.**
 
    We can build the image using the command “docker build -t imagename .”
 
