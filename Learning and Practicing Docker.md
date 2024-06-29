@@ -14,7 +14,7 @@
 
    We can install the Docker Desktop from the Docker official website.
 
-   ![](Aspose.Words.c1a068db-197f-49e4-8b03-4f02c5c1b9d2.001.png)
+   ![](images/Aspose.Words.c1a068db-197f-49e4-8b03-4f02c5c1b9d2.001.png)
 
    ![](Aspose.Words.c1a068db-197f-49e4-8b03-4f02c5c1b9d2.002.png)
 
