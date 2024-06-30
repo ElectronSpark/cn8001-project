@@ -11,6 +11,31 @@
 
 ## Install NFS Server
 
+Install NFS server on master node
+
+```bash
+root@k8s-controller:~# sudo apt install nfs-kernel-server
+```
+
+Install NFS client on all nodes
+
+```bash
+root@k8s-controller:~# sudo apt install nfs-common
+```
+
+Directories to be exported should be added to `/etc/exports`. We first created two directories `/data/nfs/rw` and `/data/nfs/ro`, then export `rw` as read and write directory to subnet `10.0.0.0/24`, and export `ro` as readonly directory.
+
+```conf
+/data/nfs/rw    10.0.0.0/24(rw,sync,no_subtree_check,no_root_squash)
+/data/nfs/ro    10.0.0.0/24(ro,sync,no_subtree_check,no_root_squash)
+```
+
+Then restart the nfs service to reload the configuration.
+
+```bash
+root@k8s-controller:~# service nfs-kernel-server restart
+```
+
 ## install CSI NFS Driver
 
 The git repository URL of csi-driver-nfs: https://github.com/kubernetes-csi/csi-driver-nfs.git
@@ -51,7 +76,7 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 
 ## Validation
 
-在完成上述安装后，查看 `kube-system` 命名空间下的 deployment，可以看到 NFS provisioner 的 deployment 已经被创建。
+After its installation, check the deployments under namespace `kube-system` , and we can see the deployment for NFS provisioner has been created。
 
 ```bash
 root@k8s-controller:/home/ubuntu/volumes# kubectl get deploy -n kube-system
@@ -61,7 +86,7 @@ csi-nfs-controller                1/1     1            1           19h
 nfs-subdir-external-provisioner   1/1     1            1           20s
 ```
 
-再查看现有的 Storage Class，可以看到 `nfs-client` 即为刚刚安装的 NFS storage class。
+Lets check the Storage Classes, and we can see the newly installed Storage Class named `nfs-client`。
 
 ```bash
 root@k8s-controller:/home/ubuntu/volumes# kubectl get sc
@@ -69,7 +94,7 @@ NAME                   PROVISIONER                                     RECLAIMPO
 nfs-client (default)   cluster.local/nfs-subdir-external-provisioner   Delete          Immediate           true                   52s
 ```
 
-通过以下命令创建一个 nginx 服务，将80端口作为 NodePort 暴露出去，使用 nfs-client 的 StorageClass 创建一个 PVC，将其挂载到 pod 中的路径 `/usr/share/nginx/html`。
+Execute the follwing command to create an nginx service, exposing port 80 as Node Port. In the corresponding deployment, create a PVC as Storage Class `nfs-client`, and mount it to `/usr/share/nginx/html` inside the nginx pod.
 
 ```bash
 kubectl apply -f - <<EOF
@@ -133,7 +158,7 @@ nginx        ClusterIP   None            <none>        80/TCP         4d      ap
 nginx-sc     NodePort    10.100.251.38   <none>        80:31556/TCP   60s     app=nginx-sc
 ```
 
-查看当前存在的 PVC
+Check the PVC just created.
 
 ```bash
 root@k8s-controller:/home/ubuntu/volumes# kubectl get pvc
