@@ -67,13 +67,6 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
     --set storageClass.defaultClass="nfs-client"
 ```
 
-其中额外自定义设置的参数如下：
-
-- nfs.server：NFS服务器的FQDN或者IP地址。由于之前将NFS服务器搭建在 master 节点上，所以这里就填 master 节点的 hostname，`k8s-controller`。
-- nfs.path：NFS 服务器上存放 NFS Persistent Volume 的路径。这个路径需要提前在 NFS 的 `/etc/exports` 中向外 export，这里填 master 上 export 的具有读写权限的目录 `/data/nfs/rw`。
-- storageClass.archiveOnDelete：在删除了 PVC 之后是否将其归档。当该参数被设置为 `true` 时，那么通过 NFS 的 Storage Class 创建的 PVC 在被删除时其对应的 PV 不会被删除，而仅仅会被更改名称。为了节省实验环境的存储空间，这里将其设置为 `false`。
-- storageClass.defaultClass：NFS Provisioner 关联的 Storage Class 的名称。在安装 Provisioner 的过程中，会创建一个对应的 Storage Class，并以该参数的值命名。
-
 The custom parameters are as follows:
 
 - nfs.server: The FQDN or IP address of the NFS server. Since we set up the NFS server on the master node earlier, we use the hostname of the master node here, which is `k8s-controller`.
