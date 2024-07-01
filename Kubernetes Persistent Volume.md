@@ -74,6 +74,13 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 - storageClass.archiveOnDelete：在删除了 PVC 之后是否将其归档。当该参数被设置为 `true` 时，那么通过 NFS 的 Storage Class 创建的 PVC 在被删除时其对应的 PV 不会被删除，而仅仅会被更改名称。为了节省实验环境的存储空间，这里将其设置为 `false`。
 - storageClass.defaultClass：NFS Provisioner 关联的 Storage Class 的名称。在安装 Provisioner 的过程中，会创建一个对应的 Storage Class，并以该参数的值命名。
 
+The custom parameters are as follows:
+
+- nfs.server: The FQDN or IP address of the NFS server. Since we set up the NFS server on the master node earlier, we use the hostname of the master node here, which is `k8s-controller`.
+- nfs.path: The path on the NFS server where the NFS Persistent Volume is stored. This path must be exported in the NFS `/etc/exports` file. Here, we use the read-write directory exported on the master node `/data/nfs/rw`.
+- storageClass.archiveOnDelete: Whether to archive the PVC after it is deleted. When this parameter is set to `true`, the PV corresponding to the PVC created through the NFS Storage Class will not be deleted when the PVC is deleted, but will simply have its name changed. To save storage space in the experimental environment, it is set to `false`.
+- storageClass.defaultClass: The name of the Storage Class associated with the NFS Provisioner. During the installation of the Provisioner, a corresponding Storage Class is created and named according to the value of this parameter.
+
 ## Validation
 
 After its installation, check the deployments under namespace `kube-system` , and we can see the deployment for NFS provisioner has been created。
@@ -148,7 +155,7 @@ spec:
 EOF
 ```
 
-创建完成后通过以下命令查看 default 命名空间存在的服务，可以看到刚刚创建的 `nginx-sc` 服务的 80 端口被映射到了 master 节点的 31556 端口，之后我们将会通过 master 节点的 IP 地址以及这个端口在浏览器中访问 nginx 服务。
+After creation of the example service, check the services in the default namespace, and we can see that the 80 port of the nginx-sc service has been mapped to port 31556 of the master node. We will access the nginx service in the browser using the master node's IP address and this port.
 
 ```bash
 root@k8s-controller:/home/ubuntu/volumes# kubectl get svc -o wide
@@ -166,7 +173,7 @@ NAME                   STATUS   VOLUME                                     CAPAC
 nginx-pvc-nginx-sc-0   Bound    pvc-bcc2f1e1-19aa-4b93-8418-b23340bd77e8   1Gi        RWO            nfs-client     <unset>                 18h
 ```
 
-在 master 节点上查看 `/data/nfs/rw` 下目录项，可以看到 `nginx-pvc` 服务对应的 PVC 被存放到了 `default-nginx-pvc-nginx-sc-0-pvc-bcc2f1e1-19aa-4b93-8418-b23340bd77e8` 目录下。
+On the master node, check the directory items under /data/nfs/rw, and we can see that the PVC corresponding to the nginx-pvc service is stored in the directory default-nginx-pvc-nginx-sc-0-pvc-bcc2f1e1-19aa-4b93-8418-b23340bd77e8.
 
 ```bash
 root@k8s-controller:/home/ubuntu/volumes# ls /data/nfs/rw -lh
@@ -175,7 +182,7 @@ drwxrwxrwx 2 root root 4.0K Jun 30 02:08 default-nginx-pvc-nginx-sc-0-pvc-bcc2f1
 drwxrwxrwx 2 root root 4.0K Jun 30 20:12 default-www-web-0-pvc-1ffa0622-2fb8-42e0-b1fd-724673a594ad
 ```
 
-现在在该目录下创建一个自定义的 `index.html` 文件。
+Now, create a custom index.html file in this directory as the index page when accessing the nginx server.
 
 ```bash
 root@k8s-controller:~# cat - >> /data/nfs/rw/default-nginx-pvc-nginx-sc-0-pvc-bcc2f1e1-19aa-4b93-8418-b23340bd77e8/index.html <<EOF
