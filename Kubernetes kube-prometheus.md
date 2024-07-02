@@ -27,19 +27,6 @@ kubectl apply -f manifests/
 ```
 
 ```bash
-kubectl label node k8s-node1 ingress=on
-
-helm install ingress-nginx ingress-nginx/ingress-nginx \
-  --namespace ingress-nginx --create-namespace \
-  --set controller.deploy.kind=DaemonSet \
-  --set controller.nodeSelector.ingress="on" \
-  --set controller.service.type=ClusterIP \
-  --set controller.hostNetwork=true \
-  --set controller.dnsPolicy=ClusterFirstWithHostNet \
-  --set controller.admissionWebhooks.enabled=false
-```
-
-```bash
 kubectl apply -f - <<EOF
 apiVersion: networking.k8s.io/v1
 kind: Ingress
