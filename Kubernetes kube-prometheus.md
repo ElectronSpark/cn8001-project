@@ -28,11 +28,25 @@ kubectl apply -f manifests/
 
 ```bash
 kubectl apply -f - <<EOF
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: basic-auth
+  namespace: monitoring
+data: 
+  auth: dXNlcjokYXByMSRpdjlUU20uZiRSdHUuSm5IRFMuQUx5eUVOZEN1TkYxCg==
+type: Opaque
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: monitoring
   name: prometheus-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
 spec:
   ingressClassName: "nginx"
   rules:
@@ -45,7 +59,7 @@ spec:
           service:
             name: grafana
             port: 
-              number: 3000
+              name: http
   - host: prometheus.ingress.com
     http:
       paths:
@@ -55,7 +69,7 @@ spec:
           service:
             name: prometheus-k8s
             port: 
-              number: 9090
+              name: web
   - host: alertmanager.ingress.com
     http:
       paths:
@@ -65,6 +79,6 @@ spec:
           service:
             name: alertmanager-main
             port: 
-              number: 9093
+              name: web
 EOF
 ```
