@@ -65,7 +65,7 @@ spec:
         backend:
           service:
             name: prometheus-k8s
-            port: 
+            port:
               name: web
   - host: alertmanager.ingress.com
     http:
@@ -75,7 +75,7 @@ spec:
         backend:
           service:
             name: alertmanager-main
-            port: 
+            port:
               name: web
 EOF
 ```
