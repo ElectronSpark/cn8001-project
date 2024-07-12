@@ -1,4 +1,4 @@
-# Install Google Kubernetes Engine
+# Install GKE and Deploy a Sample App
 
 Google Kubernetes Engine (GKE) is a managed [Kubernetes](https://kubernetes.io/) service that you can use to deploy and operate containerized applications at scale using Google's infrastructure. 
 
@@ -23,4 +23,8 @@ In this section, we are going to Create an Autopilot cluster and name it `cluste
 gcloud container clusters create-auto cluster-sample \
     --location=us-central1
 ```
+
+After several minutes, we can see it successfully installed and running.
+
+![installsuccess](C:\Case Study\cn8001-project\images\Install_GKE\installsuccess.png)
 
