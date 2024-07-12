@@ -9,7 +9,9 @@ In this section, we are going to install GKE in Google Cloud Platform and test i
 1. In the Google Cloud console, on the project selector page, select or create a Google Cloud Project.
 2. Enable Artifact Registry API and Kubernetes Engine API
 
-## ![Screenshot1](./images/Install_GKE/Screenshot1.png)Launch Cloud Shell
+## ![Screenshot1](./images/Install_GKE/Screenshot1.png)
+
+## Launch Cloud Shell
 
 Go to the Google Cloud console and activate the Cloud Shell, and set the default project to the one we are working on.
 
