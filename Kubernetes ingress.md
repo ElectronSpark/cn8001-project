@@ -41,7 +41,61 @@ The custom parameters are as follows:
 - controller.dnsPolicy: change to `ClusterFirstWithHostNet` so that the nginx-controller keeps resolving names inside the k8s network.
 - controller.admissionWebhooks.enabled: HTTPS certificates related. This field is set to false by now.
 
-After its installation, we can check the service installed during the process in namespace `ingress-nginx`.
+After its installation, you will see the following output:
+
+```bash
+NAME: ingress-nginx
+LAST DEPLOYED: Tue Jul  9 19:22:48 2024
+NAMESPACE: ingress-nginx
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+The ingress-nginx controller has been installed.
+Get the application URL by running these commands:
+  export POD_NAME="$(kubectl get pods --namespace ingress-nginx --selector app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/component=controller --output jsonpath="{.items[0].metadata.name}")"
+  kubectl port-forward --namespace ingress-nginx "${POD_NAME}" 8080:80
+  echo "Visit http://127.0.0.1:8080 to access your application."
+
+An example Ingress that makes use of the controller:
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: example
+    namespace: foo
+  spec:
+    ingressClassName: nginx
+    rules:
+      - host: www.example.com
+        http:
+          paths:
+            - pathType: Prefix
+              backend:
+                service:
+                  name: exampleService
+                  port:
+                    number: 80
+              path: /
+    # This section is only required if TLS is to be enabled for the Ingress
+    tls:
+      - hosts:
+        - www.example.com
+        secretName: example-tls
+
+If TLS is enabled for the Ingress, a Secret containing the certificate and key must also be provided:
+
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: example-tls
+    namespace: foo
+  data:
+    tls.crt: <base64 encoded cert>
+    tls.key: <base64 encoded key>
+  type: kubernetes.io/tls
+```
+
+We can check the service installed during the process in namespace `ingress-nginx`.
 
 ```bash
 root@k8s-controller:/home/ubuntu/ingress# kubectl get svc -n ingress-nginx -o wide
