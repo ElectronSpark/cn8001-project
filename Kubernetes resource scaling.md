@@ -1,16 +1,16 @@
 # Resource Scaling
 
-Kubernetes 的一大优势就是资源的可拓展性，由此搭建在 Kubernetes 之上的服务可以在流量高峰期的时候快速对服务器进行扩容，防止过载；而在低峰期时可以快速缩容，以减少空置资源所带来的额外费用。并且无论扩容还是缩容，都可以不对服务器进行重启，整个过程对用户而言是无感知的。
+One of the significant advantages of Kubernetes is its scalability, allowing services built on Kubernetes to quickly scale up during peak hours to prevent overload, and scale down during off-peak times to reduce additional costs from idle resources. Both scaling up and scaling down can be done without restarting the servers, making the entire process seamless and unnoticeable to the user.
 
-在 Kubernetes 里有两种方式对服务进行扩缩容，分别为水平扩缩容和垂直扩缩容。水平扩缩容指改变 pod 副本的数量，而垂直扩缩容指改变现有的 pod 的可用资源数量。
+In Kubernetes, there are two ways to scale services: horizontal scaling and vertical scaling. Horizontal scaling involves changing the number of replicas, while vertical scaling involves changing the amount of available resources for existing pods, like CPU cores and memory.
 
 ![](./images/kube_resource_scaling/v_h_scaling.drawio.png)
 
 ## Horizontal Scaling
 
-Horizontal Scaling 会改变 Pod 副本的数量，因此适用于 `Deployments` 和 `StatefulSets` 。而 `DaemonSet` 的 Pod 副本数量取决于满足特定条件的节点的数量，因此 Horizontal Scaling 对其是无意义的。
+Horizontal Scaling changes the number of replicas, making it suitable for Deployments and StatefulSets. However, the number of replicas for a DaemonSet depends on the number of nodes that meet certain conditions, so Horizontal Scaling is meaningless for it.
 
-Pod 副本的数量在 `Deployments` 和 `StatefulSets` 创建时由 `spec.replicas` 字段的值决定，下面创建一个名为 `sample-deploy` 的 `Deployment` 作为演示，指定其初始的副本数量为1。首先创建名为 `sample-deploy.yaml` 的 yaml 文件，并写下面的内容。
+The number of replicas in Deployments and StatefulSets is determined by the value of the `spec.replicas` field in their manifest. Below is an example manifest of a Deployment named sample-deploy initially with 1 replica. First, create a manifest file named `sample-deploy.yaml` and write the following content.
 
 ```yaml
 apiVersion: apps/v1
@@ -36,7 +36,7 @@ spec:
         - containerPort: 80
 ```
 
-执行 `kubectl apply -f sample-deploy.yaml` 来根据 `sample-deploy.yaml` 文件创建 `Deployment`。过后查看新创建的 `sample-deploy`，显示其有一个副本，且都处于 Ready 状态。
+Execute `kubectl apply -f sample-deploy.yaml` to create the Deployment in the sample-deploy.yaml file. Afterwards, check the newly created sample-deploy and the output shows that it has one replica in Ready status.
 
 ```bash
 $ kubectl get deploy sample-deploy
@@ -45,11 +45,11 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 sample-deploy   1/1     1            1           2m45s
 ```
 
-通过执行 `kubectl scale` 命令可以实现 Deployment 的 Horizontal Scaling。通过执行下面的命令将 `sample-deploy` 的副本数量扩大到2。
+Horizontal Scaling for a Deployment can be achieved by executing the `kubectl scale` command. The following command scales the sample-deploy replica count to 2.
 
 `kubectl scale deployments/sample-deploy --replicas=2`
 
-再次查看 `sample-deploy` 可以看到其中的副本数量以及扩展到了2，且都处于 Ready 状态。
+Checking sample-deploy again shows that the number of replicas has been increased to 2, and both are in Ready status.
 
 ```bash
 $ kubectl get deploy sample-deploy
@@ -57,11 +57,11 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 sample-deploy   2/2     2            2           4m42s
 ```
 
-通过执行 `kubectl patch` 命令也可实现 Deployment 的 Horizontal Scaling。通过执行下面的命令将 `sample-deploy` 的副本数量扩大到3。其中 `-p` 后跟着的是一串 json 格式的字符串，这里指定将 `spec.replicas` 字段的值修改到3。
+Horizontal Scaling for a Deployment can also be achieved by executing the `kubectl patch command`. The following command scales the sample-deploy replica count to 3. The string following `-p` is a JSON formatted string which changes the value of the spec.replicas field to 3.
 
 `kubectl patch deployments/sample-deploy -p '{"spec":{"replicas":3}}'`
 
-再次查看 `sample-deploy` 可以看到其中的副本数量以及扩展到了3，且都处于 Ready 状态。
+Checking the status of sample-deploy again shows that the number of replicas has been increased to 3, and all are in Ready status.
 
 ```bash
 $ kubectl get deploy sample-deploy
@@ -69,7 +69,7 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 sample-deploy   3/3     3            3           45m
 ```
 
-最后执行 `kubectl describe deploy sample-deploy` 可以看到 `sample-deploy` 更详细的信息。从这条命令的输出中可以看到它经历了两次扩容，副本数量分别从1扩展到了2，再从2扩展到了3。
+Finally, executing `kubectl describe deploy sample-deploy` reveals more detailed information about sample-deploy. From its output, it can be seen that sample-deploy has undergone two scaling operations, with the number of replicas increased from 1 to 2, and then from 2 to 3.
 
 ```bash
 Name:                   sample-deploy
@@ -111,16 +111,16 @@ Run `kubectl delete -f sample-deploy.yam` to clean it up.
 
 ## Horizontal Pod Autoscaler
 
-Kubernetes 的扩容缩容被用于应对服务负载的变化，而 `Horizontal Pod Autoscaler` （简写为`HPA`）会可以根据服务当前的需求调整 Pod 副本的数量，在 1.23 版本中首次被引入。
+Kubernetes scaling is used to cope with changes in service load, and the Horizontal Pod Autoscaler (HPA) can adjust the number of pod replicas based on current service demand. HPA was first introduced in version 1.23.
 
-要使用 HPA，需要预先部署 [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server#readme) 用于搜集当前集群中的 metrics 信息，并设置其通过 Kubernetes API 暴露这些 metrics 信息。如果 Metrics Server 被正确部署，在 `kubectl get apiservice` 命令的输出中可以看到对应的 API Service，默认是 `v1beta1.metrics.k8s.io`。
+To use HPA, you need to deploy the metrics-server in advance to collect metrics information from the kubernetes cluster and expose this information via the Kubernetes API. If the Metrics Server is properly deployed, you will see the corresponding API Service via `kubectl get apiservice`, which is `v1beta1.metrics.k8s.io` by default.
 
 ```bash
 $ kubectl get apiservice | grep metrics
 v1beta1.metrics.k8s.io                 kube-system/metrics-server   True        4d18h
 ```
 
-为了测试 HPA，首先创建名为 `sample-deploy-hpa.yaml` 的 yaml 文件，并将以下内容写入其中。
+To test HPA, first create a yaml file named sample-deploy-hpa.yaml and write the following content.
 
 ```yaml
 ---
@@ -164,7 +164,7 @@ spec:
             cpu: 200m
 ```
 
-保存退出后，在控制台中输入并执行 `kubectl apply -f sample-deploy-hpa.yaml` 创建 Deployment 以及 Service，执行后查看 `sample-deploy` 的状态，可见目前副本数量为3。
+Save and exit, then run `kubectl apply -f sample-deploy-hpa.yaml` to create the Deployment and Service. After execution, check the status of sample-deploy to see that the current number of replicas is 3.
 
 ```bash
 $ kubectl get deploy sample-deploy
@@ -172,11 +172,11 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 sample-deploy   3/3     3            3           16s
 ```
 
-通过执行 `kubectl autoscale` 命令创建 HPA。针对刚刚创建的 Deployment 执行下面的指令创建 HPA，其中参数 `--cpu-percent=10` 表示  HPA 会通过改变 Pod 副本的数量使得所有 Pod 的平均 CPU 使用率保持在 10% 上下，并且 Pod 副本数量在 1 到 10 之间。
+Create the HPA by executing the `kubectl autoscale` command. The following command creates an HPA for the Deployment just created, where the `--cpu-percent=10` parameter indicates that the HPA will adjust the number of replicas to maintain an average CPU usage of 10% across all pods, with the number of replicas ranging from 1 to 10.
 
 `kubectl autoscale deployment sample-deploy --cpu-percent=10 --min=1 --max=10`
 
-等待一分钟后，执行 `kubectl get hpa` 可以看到 HPA 的状态。
+Wait for a minute, then execute kubectl get hpa to see the status of the HPA.
 
 ```bash
 $ kubectl get hpa
@@ -184,7 +184,7 @@ NAME            REFERENCE                  TARGETS   MINPODS   MAXPODS   REPLICA
 sample-deploy   Deployment/sample-deploy   0%/10%    1         10        1          18m
 ```
 
-再查看 `sample-deploy` 的状态，由于现在的 CPU 使用率为 0%，小于阈值 10%，其 Pod 副本的数量已经收缩到了1。
+Check the status of sample-deploy again, and since the current CPU usage is 0%, which is below the threshold of 10%, the number of pod replicas has been reduced to 1 automatically.
 
 ```bash
 $ kubectl get deploy sample-deploy
@@ -192,7 +192,7 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 sample-deploy   1/1     1            1           30m
 ```
 
-为了让 HPA 自动增加 Pod 副本的数量，需要手动制造对 sample-deploy 的负载，使得 sample-deploy 中每个 Pod 的 CPU 使用率大于阈值 10%。创建名为 `load-generator.yaml` 的 yaml 文件，并输入以下内容。
+To make the HPA automatically increase the number of replicas, you need to manually generate loads on sample-deploy so that the CPU usage of each pod exceeds the threshold of 10%. Create a yaml file named `load-generator.yaml` and input the following content.
 
 ```yaml
 apiVersion: v1
@@ -210,7 +210,7 @@ spec:
   restartPolicy: Never
 ```
 
-保存并退出，执行 `kubectl apply -f load-generator.yaml` 创建 Pod。等待一分钟后，查看 HPA 的状态，从 TATGETS 字段可以看出 sample-deploy 中平均每个 Pod 的 CPU 使用率为 12%，而副本的数量增加到了3。
+Save and exit, then execute `kubectl apply -f load-generator.yaml` to create the Pod. Wait for a minute, then check the status of the HPA. The TARGETS field shows that the average CPU usage of each pod in sample-deploy is 12%, and the number of replicas has increased to 3.
 
 ```bash
 $ kubectl get hpa
@@ -218,7 +218,7 @@ NAME            REFERENCE                  TARGETS   MINPODS   MAXPODS   REPLICA
 sample-deploy   Deployment/sample-deploy   12%/10%   1         10        3          55m
 ```
 
-查看 Deployment 的状态，确定现在 sample-deploy 的副本增加到了3。
+Check the status of sample-deploy to confirm that the number of replicas has increased to 3.
 
 ```bash
 $ kubectl get deploy sample-deploy
@@ -226,11 +226,11 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 sample-deploy   3/3     3            3           12m
 ```
 
-执行以下命令删除制造负载的 Pod。
+Run the following command to delete the load-generating Pod.
 
 `kubectl delete -f load-generator.yaml`
 
-等待一分钟后查看 HPA 的状态，其 CPU 使用率降回了 0%，且 Pod 副本数量降回了1。
+Wait for a minute and then check the status of the HPA. The CPU usage has dropped back to 0%, and the number of replicas has decreased to 1.
 
 ```bash
 $ kubectl get hpa
@@ -238,7 +238,7 @@ NAME            REFERENCE                  TARGETS   MINPODS   MAXPODS   REPLICA
 sample-deploy   Deployment/sample-deploy   0%/10%    1         10        1          68m
 ```
 
-查看 sample-deploy 的状态，确定其副本数量回到了1。
+Check the status of sample-deploy to confirm that its replica count has returned to 1.
 
 ```bash
 $ kubectl get deploy sample-deploy
@@ -246,7 +246,7 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 sample-deploy   1/1     1            1           23m
 ```
 
-为了测试副本数量达到 MAXPODS 时会不会继续增加，创建一个名为 `load-generator1.yaml` 的文件，在其中输入如下内容。
+To test if the number of replicas will continue to increase when reaching the MAXPODS, create a file named `load-generator1.yaml` and input the following content.
 
 ```yaml
 apiVersion: apps/v1
@@ -274,9 +274,9 @@ spec:
           - while true; do wget -q -O- http://sample-deploy; done
 ```
 
-保存并退出后执行 `kubectl apply -f load-generator1.yaml`，创建一个用于制造负载的 Deployment，因为其中有五个副本，能够轻易占满 sample-deploy 的资源。
+Save and exit, then execute `kubectl apply -f load-generator1.yaml` to create a Deployment that generates load. With five replicas, it can easily saturate the resources of sample-deploy.
 
-等待一分钟后查看 HPA 状态，可以看到平均的 CPU 使用率达到了 30%，远高于 10%，但副本数量却保持在了10，也就是 MAXPODS 字段的值。
+Wait for a minute and then check the status of the HPA. The average CPU usage has reached 30%, well above 10%, but the number of replicas remains at 10, which matches the value of the MAXPODS field.
 
 ```bash
 $ kubectl get hpa
@@ -285,6 +285,8 @@ sample-deploy   Deployment/sample-deploy   30%/10%   1         10        10     
 ```
 
 除了直接使用 `kubectl autoscale` 命令创建 HPA，也可以使用 yaml 文件创建 HPA。
+
+In addition to using the `kubectl autoscale` command to create an HPA directly, you can also create an HPA using a yaml file.
 
 ```yaml
 apiVersion: autoscaling/v2
@@ -307,6 +309,8 @@ spec:
         averageUtilization: 20
 ```
 
-`kubectl apply -f sample-hpa.yaml`
+Run `kubectl apply -f sample-hpa.yaml` to apply the configuration.
 
 ## Vertical Scaling
+
+https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/
