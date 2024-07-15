@@ -9,13 +9,13 @@ In this section, we are going to install GKE in Google Cloud Platform and test i
 1. In the Google Cloud console, on the project selector page, select or create a Google Cloud Project.
 2. Enable Artifact Registry API and Kubernetes Engine API
 
-## ![Screenshot1](./images/Install_GKE/Screenshot1.png)
+## ![Screenshot1](../../images/Install_GKE/Screenshot1.png)
 
 ## Launch Cloud Shell
 
 Go to the Google Cloud console and activate the Cloud Shell, and set the default project to the one we are working on.
 
-![Lauchshell](./images/Install_GKE/Lauchshell.png)
+![Lauchshell](../../images/Install_GKE/Lauchshell.png)
 
 ## Create a GKE cluster
 
@@ -28,7 +28,7 @@ gcloud container clusters create-auto cluster-sample \
 
 After several minutes, we can see it successfully installed and running.
 
-![installsuccess](./images/Install_GKE/installsuccess.png)
+![installsuccess](../../images/Install_GKE/installsuccess.png)
 
 ## Deploy an application to the cluster
 
@@ -45,7 +45,7 @@ kubectl create deployment hello-server \
 
 This Kubernetes command, creates a Deployment named `hello-server`. The Deployment's Pod runs the `hello-app` container image.
 
-![deployhello](./images/Install_GKE/deployhello.png)
+![deployhello](../../images/Install_GKE/deployhello.png)
 
 We can see that the hello-server is created.
 
@@ -64,7 +64,7 @@ kubectl expose deployment hello-server \
 
 After that, we can access the application by using the external IP address.
 
-![website](./images/Install_GKE/website.png)
+![website](../../images/Install_GKE/website.png)
 
 
 
