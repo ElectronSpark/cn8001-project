@@ -4,7 +4,7 @@ One of the significant advantages of Kubernetes is its scalability, allowing ser
 
 In Kubernetes, there are two ways to scale services: horizontal scaling and vertical scaling. Horizontal scaling involves changing the number of replicas, while vertical scaling involves changing the amount of available resources for existing pods, like CPU cores and memory.
 
-![](./images/kube_resource_scaling/v_h_scaling.drawio.png)
+![](../../images/kube_resource_scaling/v_h_scaling.drawio.png)
 
 ## Horizontal Scaling
 
