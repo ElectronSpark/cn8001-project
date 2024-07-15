@@ -193,15 +193,15 @@ demo-nginx-ingress   nginx   k8s.demoingress.com   10.106.153.132   80      2m48
 
 In order to send the hostname used to the nginx ingress and the demo service, we need to add the hostname with the IP address of the node running the ingress controller to hosts file. After edditing the hosts file, the operating system will access node1 when the user tries to access `k8s.demoingress.com`. the path to hosts for linux is `/etc/hosts`, and for windows is `C:\Windows\System32\drivers\etc\hosts`.
 
-![](./images/kube_nginx_ingress/windows_hosts.png)
+![](../../images/kube_nginx_ingress/windows_hosts.png)
 
 Now open a web browser windows, and access `k8s.demoingress.com`, `k8s.demoingress.com/xxx`, and `k8s.demoingress.com/test`.
 
-![](./images/kube_nginx_ingress/browse_root.png)
+![](../../images/kube_nginx_ingress/browse_root.png)
 
-![](./images/kube_nginx_ingress/browse_xxx.png)
+![](../../images/kube_nginx_ingress/browse_xxx.png)
 
-![](./images/kube_nginx_ingress/browse_test.png)
+![](../../images/kube_nginx_ingress/browse_test.png)
 
 All the three URLs returns nginx 404 page, but only the last one is from the demo service. And there is only one request recorded in the log of the demo pod.
 
