@@ -82,14 +82,14 @@ EOF
 
 Add the follwing entries into hosts file, pointing the three entries to the node running nginx ingress controller, which is `10.0.0.21` in this cluster. the path to hosts for linux is `/etc/hosts`, and for windows is `C:\Windows\System32\drivers\etc\hosts`.
 
-![hosts file](./images/kube_prometheus/edit-hosts.png)
+![hosts file](../../images/kube_prometheus/edit-hosts.png)
 
 Now users can access prometheus dashboard, alertmanager dashboard, and grafana dashboard in web-browsers.
 
-![prometheus-dashboard](./images/kube_prometheus/prometheus-dashboard.png)
+![prometheus-dashboard](../../images/kube_prometheus/prometheus-dashboard.png)
 
-![alertmanager-dashboard](./images/kube_prometheus/alertmanager-dashboard.png)
+![alertmanager-dashboard](../../images/kube_prometheus/alertmanager-dashboard.png)
 
-![grafana-dashboard](./images/kube_prometheus/grafana-dashboard.png)
+![grafana-dashboard](../../images/kube_prometheus/grafana-dashboard.png)
 
 The default username and password for grafana dashboard are `admin` and `admin`.
