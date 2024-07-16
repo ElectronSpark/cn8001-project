@@ -185,4 +185,4 @@ EOF
 
 Now we access the master node with url http://10.0.0.15:31556 , and what it returns should be the file we wrote to the path of the PVC on the master node.
 
-![](./images/kube_pv/web_browser_access_nginx_pvc.png)
+![](../../images/kube_pv/web_browser_access_nginx_pvc.png)
