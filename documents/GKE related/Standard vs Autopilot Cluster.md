@@ -41,5 +41,6 @@
 ### Reference:
 - [Compare GKE Autopilot and Standard](https://cloud.google.com/kubernetes-engine/docs/resources/autopilot-standard-feature-comparison)
 - [GKE Auto Pilot vs Standard Mode: Which One to Choose?](https://medium.com/@kessilerrodrigues/gke-auto-pilot-vs-standard-mode-which-one-to-choose-ffe80165b753)
+- [GKE Policy Automation library](https://github.com/ajayk/gke-policy-automation/tree/main/gke-policies-v2)
   
 
