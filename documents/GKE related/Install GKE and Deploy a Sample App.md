@@ -68,3 +68,6 @@ After that, we can access the application by using the external IP address.
 
 
 
+## Reference
+
+https://cloud.google.com/kubernetes-engine/docs/deploy-app-cluster
