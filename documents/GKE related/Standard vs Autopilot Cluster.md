@@ -1,6 +1,5 @@
 ### Standard vs Autopilot Cluster
-- Standard cluster can set the regional and zonal cluster,
-  Autopilot can set regional cluster.
+- Standard cluster can set the regional and zonal cluster while Autopilot can set regional cluster.
 - Autopilot clusters automatically manage nodes, scaling up or down based on cluster usage, and also includes features like automated node replacement, while standard clusters require manual node management and configuration. Autopilot clusters offload node management tasks to Google Cloud, freeing up cluster administrators to focus on application development and deployment.
 - Standard custer need to manually provision new node and specify node resources, but Autopilot automatically scales the quantity and size of nodes based on Pods in the cluster.
 - In node upgrade and maintenance side, autopilot automatically repairs all the nodes and this setting can't be disabled. Standard offers automatic repairing for new created node pools by default.
