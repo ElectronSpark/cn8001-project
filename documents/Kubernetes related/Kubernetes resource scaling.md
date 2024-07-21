@@ -284,8 +284,6 @@ NAME            REFERENCE                  TARGETS   MINPODS   MAXPODS   REPLICA
 sample-deploy   Deployment/sample-deploy   30%/10%   1         10        10         93m
 ```
 
-除了直接使用 `kubectl autoscale` 命令创建 HPA，也可以使用 yaml 文件创建 HPA。
-
 In addition to using the `kubectl autoscale` command to create an HPA directly, you can also create an HPA using a yaml file.
 
 ```yaml
