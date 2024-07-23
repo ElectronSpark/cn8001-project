@@ -12,7 +12,8 @@ The following CLI command creates a single-zonal cluster, where its control plan
 gcloud container clusters create single-zonal \
     --release-channel stable \
     --zone us-central1-a \
-    --node-locations us-central1-a
+    --node-locations us-central1-a \
+    --disk-size 50G
 ```
 
 ![](../../images/gke_zonal_cluster/single_zonal_cluster_structure.drawio.png)
@@ -27,11 +28,12 @@ The follwing CLI command creates a muti-zonal cluster, where its control plane l
 gcloud container clusters create multi-zonal \
     --release-channel stable \
     --zone us-central1-a \
-    --node-locations us-central1-a,us-central1-b \
-    --num-nodes 2
+    --node-locations us-central1-a,us-central1-b,us-central1-c \
+    --num-nodes 2 \
+    --disk-size 50G
 ```
 
-When I was trying to create a multi regional cluster in 3 zones with 3 nodes each zone, and the GCloud complained an `Insufficient regional quota`. However, since my account is on free trial, and free trial accounts have limited quota during their trial period, I have to specify the number of nodes per zone to 2.
+When I was trying to create a multi regional cluster in 3 zones with 3 nodes each zone, and the GCloud complained an `Insufficient regional quota`. However, since my account is on free trial, and free trial accounts have limited quota during their trial period, I have to specify the disk size of each node from 100GB to 50GB.
 
 ![](../../images/gke_zonal_cluster/multi_zonal_cluster_structure.drawio.png)
 
@@ -195,7 +197,7 @@ flask-service   LoadBalancer   10.0.0.1       35.123.45.67    80:31337/TCP   5m
 ```bash
   gcloud container node-pools update default-pool \
     --cluster=multi-zonal \
-    --node-locations=us-central1-a \
+    --node-locations=us-central1-a,us-central1-a \
     --region=us-central1-a
 ```
 
